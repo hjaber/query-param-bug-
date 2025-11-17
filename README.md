@@ -1,38 +1,33 @@
-# sv
+# Query Parameter Navigation Bug
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Minimal reproduction of a SvelteKit navigation bug when using the experimental async compiler.
 
-## Creating a project
+## The Bug
 
-If you're seeing this, you've probably already done this step. Congrats!
+When `compilerOptions.experimental.async: true` is enabled, links with query parameters fail to navigate after hovering over multiple links. The URL updates but the page doesn't load.
 
-```sh
-# create a new project in the current directory
-npx sv create
+## Reproduce
 
-# create a new project in my-app
-npx sv create my-app
+1. Hover over 2+ links with query params (e.g., `/search?q=1`, `/search?q=2`)
+2. Click any link
+3. URL changes but page doesn't navigate
+
+Links without query params work fine.
+
+## Configuration
+
+```js
+// svelte.config.js
+compilerOptions: {
+  experimental: {
+    async: true;
+  }
+}
 ```
 
-## Developing
+## Notes
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- Only occurs with `async: true`
+- Affects static and dynamic hrefs
+- Related to query parameter preloading on hover
+- Potentially related to SvelteKit issue #14827
